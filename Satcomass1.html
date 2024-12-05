@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>satcomass1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Satcomass1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Satcomass1_files/libs/quarto-html/quarto.js"></script>
+<script src="Satcomass1_files/libs/quarto-html/popper.min.js"></script>
+<script src="Satcomass1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Satcomass1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Satcomass1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Satcomass1_files/libs/quarto-html/quarto-syntax-highlighting-2486e1f0a3ee9ee1fc393803a1361cdb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Satcomass1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Satcomass1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Satcomass1_files/libs/bootstrap/bootstrap-5bdc1ec511977dd36301403cf8f4f68d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<div id="ed1aa128-c3e4-4380-89e4-78ad211f90ae" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skyfield.api <span class="im">import</span> load</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load TLE data</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>satellites <span class="op">=</span> load.tle_file(<span class="st">'https://celestrak.com/NORAD/elements/cubesat.txt'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>cute1 <span class="op">=</span> [sat <span class="cf">for</span> sat <span class="kw">in</span> satellites <span class="cf">if</span> sat.model.satnum <span class="op">==</span> <span class="dv">27844</span>][<span class="dv">0</span>]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Satellite: </span><span class="sc">{</span>cute1<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Satellite: CUTE-1 (CO-55) catalog #27844 epoch 2024-11-30 18:02:21 UTC</code></pre>
+</div>
+</div>
+<div id="9274a574-d9af-47a8-810c-c332498c5b00" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skyfield.api <span class="im">import</span> Topos</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Bremen coordinates</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>bremen <span class="op">=</span> Topos(<span class="st">'53.0793 N'</span>, <span class="st">'8.8017 E'</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load time scale and find pass events</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> load.timescale()</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> ts.utc(<span class="dv">2024</span>, <span class="dv">12</span>, <span class="dv">1</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> ts.utc(<span class="dv">2024</span>, <span class="dv">12</span>, <span class="dv">24</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>t, events <span class="op">=</span> cute1.find_events(bremen, t0, t1, altitude_degrees<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Print sightings events</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ti, event <span class="kw">in</span> <span class="bu">zip</span>(t, events):</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    name <span class="op">=</span> (<span class="st">'rise above 30°'</span>, <span class="st">'culmination'</span>, <span class="st">'set below 30°'</span>)[event]</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>ti<span class="sc">.</span>utc_iso()<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2024-12-01T06:23:17Z rise above 30°
+2024-12-01T06:25:59Z culmination
+2024-12-01T06:28:41Z set below 30°
+2024-12-01T16:10:57Z rise above 30°
+2024-12-01T16:13:27Z culmination
+2024-12-01T16:15:58Z set below 30°
+2024-12-02T06:00:24Z rise above 30°
+2024-12-02T06:03:08Z culmination
+2024-12-02T06:05:51Z set below 30°
+2024-12-02T15:48:47Z rise above 30°
+2024-12-02T15:50:42Z culmination
+2024-12-02T15:52:38Z set below 30°
+2024-12-02T17:28:56Z rise above 30°
+2024-12-02T17:30:42Z culmination
+2024-12-02T17:32:29Z set below 30°
+2024-12-03T05:37:47Z rise above 30°
+2024-12-03T05:40:12Z culmination
+2024-12-03T05:42:37Z set below 30°
+2024-12-03T07:19:02Z rise above 30°
+2024-12-03T07:19:56Z culmination
+2024-12-03T07:20:51Z set below 30°
+2024-12-03T17:05:13Z rise above 30°
+2024-12-03T17:07:42Z culmination
+2024-12-03T17:10:12Z set below 30°
+2024-12-04T05:15:40Z rise above 30°
+2024-12-04T05:17:11Z culmination
+2024-12-04T05:18:42Z set below 30°
+2024-12-04T06:55:07Z rise above 30°
+2024-12-04T06:57:15Z culmination
+2024-12-04T06:59:22Z set below 30°
+2024-12-04T16:42:04Z rise above 30°
+2024-12-04T16:44:47Z culmination
+2024-12-04T16:47:31Z set below 30°
+2024-12-05T06:31:52Z rise above 30°
+2024-12-05T06:34:29Z culmination
+2024-12-05T06:37:06Z set below 30°
+2024-12-05T16:19:18Z rise above 30°
+2024-12-05T16:21:56Z culmination
+2024-12-05T16:24:34Z set below 30°
+2024-12-06T06:08:52Z rise above 30°
+2024-12-06T06:11:38Z culmination
+2024-12-06T06:14:24Z set below 30°
+2024-12-06T15:56:57Z rise above 30°
+2024-12-06T15:59:09Z culmination
+2024-12-06T16:01:21Z set below 30°
+2024-12-06T17:38:02Z rise above 30°
+2024-12-06T17:39:15Z culmination
+2024-12-06T17:40:29Z set below 30°
+2024-12-07T05:46:08Z rise above 30°
+2024-12-07T05:48:43Z culmination
+2024-12-07T05:51:18Z set below 30°
+2024-12-07T15:35:16Z rise above 30°
+2024-12-07T15:36:26Z culmination
+2024-12-07T15:37:36Z set below 30°
+2024-12-07T17:13:55Z rise above 30°
+2024-12-07T17:16:13Z culmination
+2024-12-07T17:18:32Z set below 30°
+2024-12-08T05:23:45Z rise above 30°
+2024-12-08T05:25:44Z culmination
+2024-12-08T05:27:42Z set below 30°
+2024-12-08T07:03:51Z rise above 30°
+2024-12-08T07:05:40Z culmination
+2024-12-08T07:07:30Z set below 30°
+2024-12-08T16:50:35Z rise above 30°
+2024-12-08T16:53:16Z culmination
+2024-12-08T16:55:57Z set below 30°
+2024-12-09T06:40:26Z rise above 30°
+2024-12-09T06:42:55Z culmination
+2024-12-09T06:45:24Z set below 30°
+2024-12-09T16:27:40Z rise above 30°
+2024-12-09T16:30:22Z culmination
+2024-12-09T16:33:05Z set below 30°
+2024-12-10T06:17:20Z rise above 30°
+2024-12-10T06:20:06Z culmination
+2024-12-10T06:22:50Z set below 30°
+2024-12-10T16:05:09Z rise above 30°
+2024-12-10T16:07:33Z culmination
+2024-12-10T16:09:58Z set below 30°
+2024-12-11T05:54:30Z rise above 30°
+2024-12-11T05:57:12Z culmination
+2024-12-11T05:59:53Z set below 30°
+2024-12-11T15:43:08Z rise above 30°
+2024-12-11T15:44:48Z culmination
+2024-12-11T15:46:29Z set below 30°
+2024-12-11T17:22:41Z rise above 30°
+2024-12-11T17:24:43Z culmination
+2024-12-11T17:26:45Z set below 30°
+2024-12-12T05:31:57Z rise above 30°
+2024-12-12T05:34:13Z culmination
+2024-12-12T05:36:29Z set below 30°
+2024-12-12T07:12:39Z rise above 30°
+2024-12-12T07:14:03Z culmination
+2024-12-12T07:15:27Z set below 30°
+2024-12-12T16:59:07Z rise above 30°
+2024-12-12T17:01:43Z culmination
+2024-12-12T17:04:19Z set below 30°
+2024-12-13T05:10:07Z rise above 30°
+2024-12-13T05:11:10Z culmination
+2024-12-13T05:12:13Z set below 30°
+2024-12-13T06:49:00Z rise above 30°
+2024-12-13T06:51:19Z culmination
+2024-12-13T06:53:37Z set below 30°
+2024-12-13T16:36:03Z rise above 30°
+2024-12-13T16:38:47Z culmination
+2024-12-13T16:41:32Z set below 30°
+2024-12-14T06:25:48Z rise above 30°
+2024-12-14T06:28:30Z culmination
+2024-12-14T06:31:12Z set below 30°
+2024-12-14T16:13:23Z rise above 30°
+2024-12-14T16:15:56Z culmination
+2024-12-14T16:18:30Z set below 30°
+2024-12-15T06:02:52Z rise above 30°
+2024-12-15T06:05:37Z culmination
+2024-12-15T06:08:23Z set below 30°
+2024-12-15T15:51:08Z rise above 30°
+2024-12-15T15:53:09Z culmination
+2024-12-15T15:55:11Z set below 30°
+2024-12-15T17:31:31Z rise above 30°
+2024-12-15T17:33:10Z culmination
+2024-12-15T17:34:50Z set below 30°
+2024-12-16T05:40:11Z rise above 30°
+2024-12-16T05:42:40Z culmination
+2024-12-16T05:45:09Z set below 30°
+2024-12-16T07:21:43Z rise above 30°
+2024-12-16T07:22:23Z culmination
+2024-12-16T07:23:02Z set below 30°
+2024-12-16T15:29:54Z rise above 30°
+2024-12-16T15:30:26Z culmination
+2024-12-16T15:30:58Z set below 30°
+2024-12-16T17:07:41Z rise above 30°
+2024-12-16T17:10:08Z culmination
+2024-12-16T17:12:36Z set below 30°
+2024-12-17T05:17:57Z rise above 30°
+2024-12-17T05:19:38Z culmination
+2024-12-17T05:21:19Z set below 30°
+2024-12-17T06:57:35Z rise above 30°
+2024-12-17T06:59:40Z culmination
+2024-12-17T07:01:43Z set below 30°
+2024-12-17T16:44:27Z rise above 30°
+2024-12-17T16:47:10Z culmination
+2024-12-17T16:49:55Z set below 30°
+2024-12-18T06:34:16Z rise above 30°
+2024-12-18T06:36:52Z culmination
+2024-12-18T06:39:28Z set below 30°
+2024-12-18T16:21:37Z rise above 30°
+2024-12-18T16:24:17Z culmination
+2024-12-18T16:26:58Z set below 30°
+2024-12-19T06:11:14Z rise above 30°
+2024-12-19T06:14:00Z culmination
+2024-12-19T06:16:46Z set below 30°
+2024-12-19T15:59:11Z rise above 30°
+2024-12-19T16:01:28Z culmination
+2024-12-19T16:03:45Z set below 30°
+2024-12-19T17:40:35Z rise above 30°
+2024-12-19T17:41:36Z culmination
+2024-12-19T17:42:39Z set below 30°
+2024-12-20T05:48:26Z rise above 30°
+2024-12-20T05:51:04Z culmination
+2024-12-20T05:53:41Z set below 30°
+2024-12-20T15:37:21Z rise above 30°
+2024-12-20T15:38:43Z culmination
+2024-12-20T15:40:04Z set below 30°
+2024-12-20T17:16:17Z rise above 30°
+2024-12-20T17:18:32Z culmination
+2024-12-20T17:20:48Z set below 30°
+2024-12-21T05:25:58Z rise above 30°
+2024-12-21T05:28:03Z culmination
+2024-12-21T05:30:07Z set below 30°
+2024-12-21T07:06:13Z rise above 30°
+2024-12-21T07:07:57Z culmination
+2024-12-21T07:09:42Z set below 30°
+2024-12-21T16:52:52Z rise above 30°
+2024-12-21T16:55:32Z culmination
+2024-12-21T16:58:14Z set below 30°
+2024-12-22T06:42:44Z rise above 30°
+2024-12-22T06:45:11Z culmination
+2024-12-22T06:47:38Z set below 30°
+2024-12-22T16:29:53Z rise above 30°
+2024-12-22T16:32:36Z culmination
+2024-12-22T16:35:21Z set below 30°
+2024-12-23T06:19:35Z rise above 30°
+2024-12-23T06:22:20Z culmination
+2024-12-23T06:25:05Z set below 30°
+2024-12-23T16:07:17Z rise above 30°
+2024-12-23T16:09:45Z culmination
+2024-12-23T16:12:14Z set below 30°</code></pre>
+</div>
+</div>
+<div id="c0244f2c-593e-43f0-9126-6aa68a8611c5" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cartopy.crs <span class="im">as</span> ccrs</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cartopy.feature <span class="im">as</span> cfeature</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skyfield.api <span class="im">import</span> load</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load satellite TLE data</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>satellites <span class="op">=</span> load.tle_file(<span class="st">'https://celestrak.com/NORAD/elements/cubesat.txt'</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>cute1 <span class="op">=</span> [sat <span class="cf">for</span> sat <span class="kw">in</span> satellites <span class="cf">if</span> sat.model.satnum <span class="op">==</span> <span class="dv">27844</span>][<span class="dv">0</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Load timescale and calculate positions</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> load.timescale()</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> ts.utc(<span class="dv">2024</span>, <span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">0</span>, <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">1440</span>, <span class="dv">10</span>))  <span class="co"># One day, minute-by-minute</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>geocentric <span class="op">=</span> cute1.at(t)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>subpoint <span class="op">=</span> geocentric.subpoint()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract latitudes and longitudes</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>latitudes <span class="op">=</span> subpoint.latitude.degrees</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>longitudes <span class="op">=</span> subpoint.longitude.degrees</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot global map</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.axes(projection<span class="op">=</span>ccrs.PlateCarree())</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>ax.coastlines()</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>ax.stock_img()</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>ax.gridlines(draw_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot satellite ground track</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>ax.plot(longitudes, latitudes, linestyle<span class="op">=</span><span class="st">'-'</span>, marker<span class="op">=</span><span class="st">'.'</span>, color<span class="op">=</span><span class="st">'red'</span>, transform<span class="op">=</span>ccrs.Geodetic())</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'CUTE-1 Ground Track (Global)'</span>)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Satcomass1_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="053811ba-3b9b-4f3c-b0ee-443bf0fb5e26" class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Observation time slot for a pass (e.g., 12:30 to 13:30 UTC on Dec 10, 2024)</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>observation_time <span class="op">=</span> ts.utc(<span class="dv">2024</span>, <span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">120</span>, <span class="dv">1</span>))  <span class="co"># Two hours, minute-by-minute</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>difference <span class="op">=</span> cute1 <span class="op">-</span> bremen</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>alt, az, distance <span class="op">=</span> difference.at(observation_time).altaz()</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot elevation and azimuth</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>time_minutes <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="bu">len</span>(alt.degrees))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.plot(time_minutes, alt.degrees, label<span class="op">=</span><span class="st">'Elevation'</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>plt.axhline(y<span class="op">=</span><span class="dv">10</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="st">'10° Minimum'</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Elevation Over Time'</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Degrees'</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>plt.plot(time_minutes, az.degrees, label<span class="op">=</span><span class="st">'Azimuth'</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Azimuth Over Time'</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Minutes'</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Degrees'</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Satcomass1_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="dc59264f-0ae0-49de-b9e7-67ebfd438549" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming relative_velocity contains all three velocity components</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>relative_velocity_z <span class="op">=</span> relative_velocity[:, <span class="dv">2</span>]  <span class="co"># Z-component (along line of sight)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Now relative_velocity_z has a length that should match the number of time steps</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>doppler_shift <span class="op">=</span> (relative_velocity_z <span class="op">/</span> speed_of_light) <span class="op">*</span> frequency</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure time_minutes has the same length as doppler_shift for plotting</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>time_minutes <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="bu">len</span>(doppler_shift))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the Doppler shift</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>plt.plot(time_minutes, doppler_shift, label<span class="op">=</span><span class="st">'Doppler Shift'</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Doppler Shift Over Time'</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Minutes'</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Hz'</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Satcomass1_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="f082b4a0-f9e4-457b-b2d8-215deb11220b" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Constants</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="fl">1.38e-23</span>  <span class="co"># Boltzmann constant</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>bandwidth <span class="op">=</span> <span class="fl">1e6</span>  <span class="co"># 1 MHz</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>temperature <span class="op">=</span> <span class="dv">290</span>  <span class="co"># 290 Kelvin</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>noise_figure <span class="op">=</span> <span class="dv">3</span>  <span class="co"># dB</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>eirp <span class="op">=</span> <span class="dv">2</span>  <span class="co"># Watts (transmit power)</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate noise</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>noise_power <span class="op">=</span> <span class="dv">10</span> <span class="op">*</span> np.log10(k <span class="op">*</span> temperature <span class="op">*</span> bandwidth)  <span class="co"># in dBm</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>receiver_noise <span class="op">=</span> noise_power <span class="op">+</span> noise_figure  <span class="co"># in dBm</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Noise Power: </span><span class="sc">{</span>noise_power<span class="sc">}</span><span class="ss"> dBm, Receiver Noise: </span><span class="sc">{</span>receiver_noise<span class="sc">}</span><span class="ss"> dBm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Noise Power: -143.97722915699808 dBm, Receiver Noise: -140.97722915699808 dBm</code></pre>
+</div>
+</div>
+<div id="6c5acd10-4c90-4712-a41d-e9e51371f5e2" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skyfield.api <span class="im">import</span> load, Topos</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load satellite TLE data and timescale</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>satellites <span class="op">=</span> load.tle_file(<span class="st">'https://celestrak.com/NORAD/elements/cubesat.txt'</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>cute1 <span class="op">=</span> [sat <span class="cf">for</span> sat <span class="kw">in</span> satellites <span class="cf">if</span> sat.model.satnum <span class="op">==</span> <span class="dv">27844</span>][<span class="dv">0</span>]</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> load.timescale()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Define observation location and time range</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>bremen <span class="op">=</span> Topos(<span class="st">'53.0793 N'</span>, <span class="st">'8.8017 E'</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>observation_time <span class="op">=</span> ts.utc(<span class="dv">2024</span>, <span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">60</span>, <span class="dv">1</span>))  <span class="co"># One hour of observation</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate azimuth and elevation</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>difference <span class="op">=</span> cute1 <span class="op">-</span> bremen</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>alt, az, distance <span class="op">=</span> difference.at(observation_time).altaz()</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert azimuth and elevation for polar plotting</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>azimuth_radians <span class="op">=</span> az.degrees <span class="op">*</span> np.pi <span class="op">/</span> <span class="dv">180</span>  <span class="co"># Convert azimuth to radians</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>elevation_polar <span class="op">=</span> <span class="dv">90</span> <span class="op">-</span> alt.degrees  <span class="co"># Invert elevation for polar plot (90° at center)</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the polar plot</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(subplot_kw<span class="op">=</span>{<span class="st">'projection'</span>: <span class="st">'polar'</span>})</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>ax.set_theta_zero_location(<span class="st">"N"</span>)  <span class="co"># North is at the top</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>ax.set_theta_direction(<span class="op">-</span><span class="dv">1</span>)  <span class="co"># Azimuth angles increase clockwise</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>ax.plot(azimuth_radians, elevation_polar, marker<span class="op">=</span><span class="st">'o'</span>, label<span class="op">=</span><span class="st">'CUTE-1'</span>)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Set radial limits and ticks</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>ax.set_rmax(<span class="dv">90</span>)</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>ax.set_rticks([<span class="dv">0</span>, <span class="dv">30</span>, <span class="dv">60</span>, <span class="dv">90</span>])  <span class="co"># Radial ticks for elevation (inverted scale)</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>ax.set_rlabel_position(<span class="op">-</span><span class="fl">22.5</span>)  <span class="co"># Move radial labels to avoid overlapping</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Polar Plot of CUTE-1 Pass Over Bremen"</span>, va<span class="op">=</span><span class="st">'bottom'</span>)</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Satcomass1_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="ddec5db3-fc55-4291-b654-c0e403dd7059" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skyfield.api <span class="im">import</span> load</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the TLE data from CelesTrak CubeSat catalog</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>satellites <span class="op">=</span> load.tle_file(<span class="st">'https://celestrak.com/NORAD/elements/cubesat.txt'</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the satellite by its NORAD ID (27844) or the name 'CUTE-1 (CO-55)'</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>cute1 <span class="op">=</span> [sat <span class="cf">for</span> sat <span class="kw">in</span> satellites <span class="cf">if</span> sat.model.satnum <span class="op">==</span> <span class="dv">27844</span>][<span class="dv">0</span>]</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the TLE data for CUTE-1 (CO-55) in the specified format</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>cute1<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CUTE-1 (CO-55) catalog #27844 epoch 2024-11-30 18:02:21 UTC</code></pre>
+</div>
+</div>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
